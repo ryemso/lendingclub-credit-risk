@@ -2,7 +2,7 @@
 
 LendingClub 대출 데이터를 이용해 **상환 실패(Default / Charged Off) 가능성을 분류**하고, 클래스 불균형 처리와 여러 분류 모델을 비교한 프로젝트입니다.
 
-이 저장소는 Google Drive에 보관된 원본 Colab notebook `9_Project_code.ipynb`의 분석 흐름을 기준으로 재구성했습니다.
+이 저장소는 Google Drive에 보관된 분석 notebook들과 이번에 복구된 **LendingClub 실험 notebook**을 기준으로 재구성했습니다. 원본에는 모델 실험뿐 아니라 target leakage를 발견하고 다시 제거해 검증한 과정도 남아 있습니다.
 
 ## Problem Definition
 
@@ -115,6 +115,11 @@ XGBoost에서는 추가로:
 
 ## Reviewable Code
 
+- [Leakage-safe Experiment Notebook](./notebooks/01_lendingclub_leakage_safe_experiments.ipynb) — 복구된 실험 notebook을 정리하고 target 제외, train-only scaling, train-only SMOTE 흐름으로 재구성
+- [Modeling Pipeline](./src/modeling_pipeline.py) — 원본 프로젝트의 전처리·모델 비교 흐름을 함수 단위로 재구성
+
+복구된 notebook 초기 실험에는 target이 numeric feature에 포함되어 비정상적으로 1.00 성능이 나온 흔적이 있었고, 이후 직접 leakage를 의심해 변수를 제거한 재실험이 존재합니다. 공개 notebook은 이 문제를 명시하고 안전한 실행 순서로 정리했습니다.
+
 [src/modeling_pipeline.py](./src/modeling_pipeline.py)는 원본 notebook의 분석 흐름을 면접/코드리뷰용으로 재구성한 파일입니다.
 
 - 개인 Google Drive 경로 제거
@@ -133,6 +138,8 @@ XGBoost에서는 추가로:
 ├── .gitignore
 ├── data/
 │   └── README.md
+├── notebooks/
+│   └── 01_lendingclub_leakage_safe_experiments.ipynb
 └── src/
     └── modeling_pipeline.py
 ```
@@ -144,11 +151,14 @@ pip install -r requirements.txt
 python src/modeling_pipeline.py
 ```
 
-원본 LendingClub CSV는 저장소에 포함하지 않습니다.
+원본 LendingClub CSV와 전처리 완료 중간 데이터는 저장소에 포함하지 않습니다.
 
 ```text
-data/accepted_2007_to_2018Q4.csv
+data/accepted_2007_to_2018Q4.csv   # raw source
+data/accepted_df2.csv              # recovered notebook input
 ```
+
+Google Drive에서 raw CSV가 약 1.67GB 규모로 확인되어 GitHub에는 데이터 대신 실행 경로만 문서화했습니다.
 
 ## Tech Stack
 
